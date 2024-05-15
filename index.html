@@ -9,6 +9,7 @@
     <div>
         <input type="text" id="searchQuery" placeholder="Enter search term..." />
         <button id="fetchButton">Fetch Photo</button>
+        <button id="downloadButton" style="display: none;">Download Photo</button> <!-- New download button -->
     </div>
     <div id="photoContainer">
         <img id="photo" src="" alt="Random Unsplash Photo" />
@@ -17,8 +18,10 @@
 
     <script>
         const { searchRandomPhoto } = require('./unsplash');
+        const { ipcRenderer } = require('electron');
 
         let isCooldown = false;
+        let currentPhotoUrl = ''; // To store the current photo URL
 
         document.getElementById('fetchButton').addEventListener('click', async () => {
             if (isCooldown) {
@@ -33,11 +36,12 @@
 
             isCooldown = true;
             document.getElementById('fetchButton').disabled = true;
-            
+
             console.log('Button clicked, searching for photo with query:', query);
             const photoData = await searchRandomPhoto(query);
 
             if (photoData) {
+                currentPhotoUrl = photoData.urls.full; // Use full size for download
                 document.getElementById('photo').src = photoData.urls.regular;
                 document.getElementById('photo').style.visibility = 'visible';
                 document.getElementById('metadata').textContent = `
@@ -48,14 +52,22 @@
                     Views: ${photoData.views}
                     Downloads: ${photoData.downloads}
                 `;
+                document.getElementById('downloadButton').style.display = 'inline'; // Show download button
             } else {
                 document.getElementById('metadata').textContent = 'No photo found for the given search term.';
+                document.getElementById('downloadButton').style.display = 'none'; // Hide download button if no photo
             }
 
             setTimeout(() => {
                 isCooldown = false;
                 document.getElementById('fetchButton').disabled = false;
             }, 5000); // 5 seconds cooldown
+        });
+
+        document.getElementById('downloadButton').addEventListener('click', () => {
+            if (currentPhotoUrl) {
+                ipcRenderer.send('download-photo', currentPhotoUrl); // Send URL to main process
+            }
         });
     </script>
 </body>
