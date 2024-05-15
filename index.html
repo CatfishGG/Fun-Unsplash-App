@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unsplash API with Electron</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>Fetch Photo from Unsplash</h1>
+    <div>
+        <input type="text" id="searchQuery" placeholder="Enter search term..." />
+        <button id="fetchButton">Fetch Photo</button>
+    </div>
+    <div id="photoContainer">
+        <img id="photo" src="" alt="Random Unsplash Photo" />
+        <p id="metadata"></p>
+    </div>
+
+    <script>
+        const { searchRandomPhoto } = require('./unsplash');
+
+        let isCooldown = false;
+
+        document.getElementById('fetchButton').addEventListener('click', async () => {
+            if (isCooldown) {
+                return;
+            }
+
+            const query = document.getElementById('searchQuery').value;
+            if (!query) {
+                alert('Please enter a search term.');
+                return;
+            }
+
+            isCooldown = true;
+            document.getElementById('fetchButton').disabled = true;
+            
+            console.log('Button clicked, searching for photo with query:', query);
+            const photoData = await searchRandomPhoto(query);
+
+            if (photoData) {
+                document.getElementById('photo').src = photoData.urls.regular;
+                document.getElementById('photo').style.visibility = 'visible';
+                document.getElementById('metadata').textContent = `
+                    Photo by ${photoData.user.name} on Unsplash
+                    Location: ${photoData.location ? photoData.location.name : 'Unknown'}
+                    Camera: ${photoData.exif ? `${photoData.exif.make} ${photoData.exif.model}` : 'Unknown'}
+                    Likes: ${photoData.likes}
+                    Views: ${photoData.views}
+                    Downloads: ${photoData.downloads}
+                `;
+            } else {
+                document.getElementById('metadata').textContent = 'No photo found for the given search term.';
+            }
+
+            setTimeout(() => {
+                isCooldown = false;
+                document.getElementById('fetchButton').disabled = false;
+            }, 5000); // 5 seconds cooldown
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+body {
+    background-image: url('https://w0.peakpx.com/wallpaper/443/608/HD-wallpaper-dark-background-yl-computing-clean-black.jpg');
+    background-size: cover;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+input[type="text"] {
+    padding: 10px;
+    width: 300px;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1em;
+}
+button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+}
+button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+#photoContainer {
+    margin-top: 20px;
+}
+#photo {
+    max-width: 100%;
+    max-height: 500px;
+    border: 5px solid white;
+    border-radius: 10px;
+    visibility: hidden;
+}
+#metadata {
+    margin-top: 10px;
+    font-size: 1.2em;
+}
